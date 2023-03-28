@@ -22,6 +22,11 @@ jobs:
     - name: Add host key to known hosts
       run: |
         touch ~/.ssh/known_hosts
+        if test -f ~/.ssh/known_hosts; then
+          echo "File exists"
+        else
+          echo "File does not exist"
+        fi
         ssh-keyscan txe1-login.mit.edu >> ~/.ssh/known_hosts
     
     - name: Copy files to cluster
