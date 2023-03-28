@@ -10,9 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
     - name: Checkout code
       uses: actions/checkout@v2
-      
+  
+    - name: Add host key to known hosts
+      run: |
+      mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
+      ssh-keyscan txe1-login.mit.edu >> ~/.ssh/known_hosts
+    
     - name: Copy files to cluster
       run: |
         ssh-keyscan txe1-login.mit.edu >> ~/.ssh/known_hosts
