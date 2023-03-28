@@ -37,6 +37,7 @@ jobs:
     - name: Print ssh directory contents
       run: |
         ls -l ~/.ssh
+        cat ~/.ssh/known_hosts
 
     - name: Copy files to cluster
       run: |
