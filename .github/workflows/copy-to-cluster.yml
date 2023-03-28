@@ -31,5 +31,9 @@ jobs:
     
     - name: Copy files to cluster
       run: |
-        echo ${{ secrets.CLUSTER_SSH_PRIVATE_KEY }} 
+        if [ -n "${{ secrets.CLUSTER_SSH_PRIVATE_KEY }}" ]; then
+          echo "${{ secrets.CLUSTER_SSH_PRIVATE_KEY }}"
+        else
+          echo "CLUSTER_SSH_PRIVATE_KEY does not exist."
+        fi
         scp -i ${{ secrets.CLUSTER_SSH_PRIVATE_KEY }} -r . jsass@txe1-login.mit.edu:/home/gridsan/jsass/idp_linkerizer
