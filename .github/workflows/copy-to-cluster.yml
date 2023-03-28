@@ -14,9 +14,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
   
+    - name: Create SSH directory
+      run: |
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+
     - name: Add host key to known hosts
       run: |
-        mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
+        touch ~/.ssh/known_hosts
         ssh-keyscan txe1-login.mit.edu >> ~/.ssh/known_hosts
     
     - name: Copy files to cluster
