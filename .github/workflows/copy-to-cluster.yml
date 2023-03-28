@@ -12,7 +12,7 @@ jobs:
     steps:
 
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
   
     - name: Create SSH directory
       run: |
@@ -33,7 +33,7 @@ jobs:
       run: |
         if [ -n "${{ secrets.CLUSTER_SSH_PRIVATE_KEY }}" ]; then
           echo "${{ secrets.CLUSTER_SSH_PRIVATE_KEY }}"
+          scp -v -i ${{ secrets.CLUSTER_SSH_PRIVATE_KEY }} -r . jsass@txe1-login.mit.edu:/home/gridsan/jsass/idp_linkerizer
         else
           echo "CLUSTER_SSH_PRIVATE_KEY does not exist."
         fi
-        scp -i ${{ secrets.CLUSTER_SSH_PRIVATE_KEY }} -r . jsass@txe1-login.mit.edu:/home/gridsan/jsass/idp_linkerizer
