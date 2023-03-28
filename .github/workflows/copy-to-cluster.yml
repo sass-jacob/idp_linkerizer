@@ -1,0 +1,19 @@
+name: Copy files to cluster
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  copy_files:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - name: Copy files to cluster
+      run: |
+        ssh-keyscan txe1-login.mit.edu >> ~/.ssh/known_hosts
+        scp -i ${{ secrets.CLUSTER_SSH_PRIVATE_KEY }} -r . jsass@txe1-login.mit.edu:/home/gridsan/jsass/idp_linkerizer
