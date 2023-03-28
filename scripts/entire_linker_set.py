@@ -1,6 +1,5 @@
 import numpy as np
 import itertools
-import sklearn
 
 def generate_unencoded_linkers():
     #generate data set to perform clustering upon
@@ -45,10 +44,6 @@ def encode_aa(aa):
         'M': 5.7, 'N': 11.6, 'P': 8.0, 'Q': 10.5, 'R': 10.5,
         'S': 11.2, 'T': 9.1, 'V': 5.6, 'W': 4.4, 'Y': 6.2
     }
-    hlbs_to_scale = np.array(list(hlb_scale.values())).reshape(-1,1)
-    hlb_scaler = sklearn.preprocessing.MinMaxScaler()
-    scaled_hlb_values = hlb_scaler.fit_transform(hlbs_to_scale).ravel()
-    standardized_hlb_scale = {key: value for key, value in zip(hlb_scale.keys(), scaled_hlb_values)}
     
     #map MW
     amino_acid_weights = {
@@ -57,11 +52,7 @@ def encode_aa(aa):
         'L': 131.18, 'K': 146.19, 'M': 149.21, 'F': 165.19, 'P': 115.13,
         'S': 105.09, 'T': 119.12, 'W': 204.23, 'Y': 181.19, 'V': 117.15
     }
-    mws_to_scale = np.array(list(amino_acid_weights.values())).reshape(-1,1)
-    mw_scaler = sklearn.preprocessing.MinMaxScaler()
-    scaled_mw_values = mw_scaler.fit_transform(mws_to_scale).ravel()
-    standardized_mw = {key: value for key, value in zip(amino_acid_weights.keys(), scaled_mw_values)}
     
-    return amino_acid_charges[aa], round(standardized_hlb_scale[aa], 3), round(standardized_mw[aa], 3)
+    return amino_acid_charges[aa], round(hlb_scale[aa], 3), round(amino_acid_weights[aa], 3)
 
 encode_aa('V')
