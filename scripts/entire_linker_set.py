@@ -55,4 +55,4 @@ def encode_aa(aa):
     
     return amino_acid_charges[aa], round(hlb_scale[aa], 3), round(amino_acid_weights[aa], 3)
 
-encode_aa('V')
+print(encode_aa('V'))
