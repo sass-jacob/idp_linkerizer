@@ -56,3 +56,19 @@ def encode_aa(aa):
     return amino_acid_charges[aa], round(hlb_scale[aa], 3), round(amino_acid_weights[aa], 3)
 
 print(encode_aa('V'))
+
+encoded_linkers_1 = []
+index = 0
+linkers = generate_unencoded_linkers()
+for linker in linkers:
+    sequence = []
+    for aa in range(6):
+        sequence.append(encode_aa(linker[aa]))
+    
+    encoded_linkers_1.append(np.array(sequence).ravel())
+    if (index % 10000 == 0):
+        print(index)
+    index += 1
+    
+print(np.shape(encoded_linkers_1))
+save_linkerfile(encoded_linkers_1,'complete_encoded_linkers')
