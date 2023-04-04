@@ -20,7 +20,7 @@ def make_pandas_dataframes(encoded_linkers):
     df_noscaler = pd.DataFrame(encoded_linkers)
     return df_noscaler, df_stdscaler, df_mmscaler
 
-def create_2d_embeddings(df_noscaler, df_stdscaler, df_mmscaler):
+def compute_PCA_embeddings(df_noscaler, df_stdscaler, df_mmscaler):
     # first create embeddings for visualization, these have 2 dimensions only
     dfs={}
     dfs['all'] = df_noscaler
@@ -72,6 +72,6 @@ def plot_PCA_projections(dfs, dfs_mm, dfs_std):
 if __name__ == '__main__':
     encoded_linkers = load_in_data() #currently loading in reduced dataset
     df_noscaler, df_stdscaler, df_mmscaler = make_pandas_dataframes(encoded_linkers)
-    dfs, dfs_mm, dfs_std = create_2d_embeddings(df_noscaler, df_stdscaler, df_mmscaler)
+    dfs, dfs_mm, dfs_std = compute_PCA_embeddings(df_noscaler, df_stdscaler, df_mmscaler)
 #    explained_variance_plot(df_noscaler, df_stdscaler, df_mmscaler)
-    plot_PCA_projections(dfs, dfs_mm, dfs_std)
+#    plot_PCA_projections(dfs, dfs_mm, dfs_std)
