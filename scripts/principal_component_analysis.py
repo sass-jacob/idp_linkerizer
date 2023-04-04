@@ -69,9 +69,21 @@ def plot_PCA_projections(dfs, dfs_mm, dfs_std):
     sns.scatterplot(x='PC1', y='PC2', data=dfs_std['pc2'], alpha=0.5, ax=ax[2]).set_title("PC projection with Standard")
     plt.savefig('figures/reduced_PCA_projection.png')
     return
+
+def save_dfs_as_pkl(dfs, dfs_mm, dfs_std):
+    #save dictionary of dataframes to a single file
+    with open('saved_files/dfs.pkl', 'wb') as f:
+        pd.to_pickle(dfs, f)
+    with open('saved_files/dfs_mm.pkl', 'wb') as f:
+        pd.to_pickle(dfs_mm, f)
+    with open('saved_files/dfs_std.pkl', 'wb') as f:
+        pd.to_pickle(dfs_std, f)
+    return
+
 if __name__ == '__main__':
     encoded_linkers = load_in_data() #currently loading in reduced dataset
     df_noscaler, df_stdscaler, df_mmscaler = make_pandas_dataframes(encoded_linkers)
     dfs, dfs_mm, dfs_std = compute_PCA_embeddings(df_noscaler, df_stdscaler, df_mmscaler)
+#    save_dfs_as_pkl(dfs, dfs_mm, dfs_std)
 #    explained_variance_plot(df_noscaler, df_stdscaler, df_mmscaler)
 #    plot_PCA_projections(dfs, dfs_mm, dfs_std)
