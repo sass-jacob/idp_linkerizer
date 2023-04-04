@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
 def load_in_dataframes():
+    #files will need to be referenced from local filesystem because .pkl files exceed the github limit
+    #adjust file directory when necessary
     with open('saved_files/dfs.pkl', 'rb') as f:
         dfs = pd.read_pickle(f)
     with open('saved_files/dfs_mm.pkl', 'rb') as f:
