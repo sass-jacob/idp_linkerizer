@@ -83,7 +83,8 @@ def save_dfs_as_pkl(dfs, dfs_mm, dfs_std):
 if __name__ == '__main__':
     encoded_linkers = load_in_data() #currently loading in reduced dataset
     df_noscaler, df_stdscaler, df_mmscaler = make_pandas_dataframes(encoded_linkers)
-    dfs, dfs_mm, dfs_std = compute_PCA_embeddings(df_noscaler, df_stdscaler, df_mmscaler)
+    print(df_noscaler)
+#    dfs, dfs_mm, dfs_std = compute_PCA_embeddings(df_noscaler, df_stdscaler, df_mmscaler)
 #    save_dfs_as_pkl(dfs, dfs_mm, dfs_std)
 #    explained_variance_plot(df_noscaler, df_stdscaler, df_mmscaler)
 #    plot_PCA_projections(dfs, dfs_mm, dfs_std)
