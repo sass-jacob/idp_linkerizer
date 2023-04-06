@@ -43,7 +43,7 @@ def pick_cluster_representatives(dfs_mm,k):
     for index in closest_indices:
         representatives[i,:] = dfs_mm['all'].values[index]
         i += 1
-    return representatives
+    return representatives, closest_indices
 
 def save_nparray(nparray,filename):
     #save linker dataset as filename 
@@ -52,7 +52,6 @@ def save_nparray(nparray,filename):
 
 def unstandardize_and_decode(representatives, std_array):
     mmscaler = sklearn.preprocessing.MinMaxScaler()
-    scaled = mmscaler.fit_transform(std_array)
     unstd_reps = mmscaler.inverse_transform(representatives)
     #map HLB
     hlb_scale = {
@@ -72,12 +71,13 @@ def unstandardize_and_decode(representatives, std_array):
     return rep_linkers
 
 if __name__ == '__main__':
-    dfs, dfs_mm, dfs_std = load_in_dataframes()
+    #dfs, dfs_mm, dfs_std = load_in_dataframes()
     #generate_elbow_plot_full_dim(dfs_mm)
-    #centroids = pick_cluster_representatives(dfs_mm, 100)
+    #centroids, closest_indices = pick_cluster_representatives(dfs_mm, 100)
     #save_nparray(centroids, 'saved_files/encoded_reps')
-    centroids = np.load('saved_files/encoded_reps.npz')['arr_0']
+    #save_nparray(closest_indices, 'saved_files/medoid_indices')
+    #centroids = np.load('saved_files/encoded_reps.npz')['arr_0']
     #representative_linkers = unstandardize_and_decode(centroids, dfs['all'])
     #save_nparray(representative_linkers, 'saved_files/decoded_reps')
-    #print(representative_linkers)
     representative_linkers = np.load('saved_files/decoded_reps.npz') 
+    print(representative_linkers['arr_0'])
