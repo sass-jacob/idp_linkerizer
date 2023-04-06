@@ -70,6 +70,19 @@ def plot_PCA_projections(dfs, dfs_mm, dfs_std):
     plt.savefig('figures/reduced_PCA_projection.png')
     return
 
+def plot_medoid_projections(dfs_mm, medoids):
+    mm_medoids = dfs_mm['pc2'].values[medoids]
+    dfs_medoids = pd.DataFrame(mm_medoids, columns=['PC1', 'PC2'])
+    fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+    #all data
+    sns.scatterplot(x='PC1', y='PC2', data=dfs_mm['pc2'], alpha=0.5, ax=ax[0])
+    ax[0].set_title("All data points in Projection")
+    #only medoids
+    sns.scatterplot(x='PC1', y='PC2', data=dfs_medoids, alpha=0.5, ax=ax[1], color='red')
+    ax[1].set_title("Medoid points in Projection")
+    plt.savefig('figures/medoid_projection.png')
+    return
+
 def save_dfs_as_pkl(dfs, dfs_mm, dfs_std):
     #save dictionary of dataframes to a single file
     with open('saved_files/dfs.pkl', 'wb') as f:
@@ -81,9 +94,13 @@ def save_dfs_as_pkl(dfs, dfs_mm, dfs_std):
     return
 
 if __name__ == '__main__':
-    encoded_linkers = load_in_data() #currently loading in reduced dataset
-    df_noscaler, df_stdscaler, df_mmscaler = make_pandas_dataframes(encoded_linkers)
-    print(df_noscaler)
+    #encoded_linkers = load_in_data() #currently loading in reduced dataset
+    #df_noscaler, df_stdscaler, df_mmscaler = make_pandas_dataframes(encoded_linkers)
+    #print(df_noscaler)
+    with open('saved_files/dfs_mm.pkl', 'rb') as f:
+        dfs_mm = pd.read_pickle(f)
+    medoid_indices = np.load('saved_files/medoid_indices.npz')['arr_0']
+    plot_medoid_projections(dfs_mm, medoid_indices)
 #    dfs, dfs_mm, dfs_std = compute_PCA_embeddings(df_noscaler, df_stdscaler, df_mmscaler)
 #    save_dfs_as_pkl(dfs, dfs_mm, dfs_std)
 #    explained_variance_plot(df_noscaler, df_stdscaler, df_mmscaler)
