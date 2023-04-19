@@ -52,10 +52,10 @@ def set_features(input_peptide):
 
 # featurize all of the data
 index = 0
-for linker in reduced_linkers:
+for linker in reduced_linkers[0:1000]:
     featurized[index, :] = set_features(linker)
     index += 1
-    if index % 10000 == 0:
-        print(index)
+#    if index % 10000 == 0:
+    print(index)
 
 save_linkerfile(featurized,'../saved_files/encoded_reduced_linkers')
