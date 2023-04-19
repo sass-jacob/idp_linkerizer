@@ -1,0 +1,2 @@
+/var/spool/slurmd/job22392315/slurm_script: line 12: 27258 Killed                  python reduced_linker_set.py
+slurmstepd-d-18-7-3: error: Detected 1 oom-kill event(s) in StepId=22392315.batch cgroup. Some of your processes may have been killed by the cgroup out-of-memory handler.
