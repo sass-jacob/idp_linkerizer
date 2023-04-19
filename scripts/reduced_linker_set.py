@@ -33,7 +33,6 @@ reduced_linkers = generate_unencoded_linkers()
 print(np.shape(reduced_linkers))
 save_linkerfile(reduced_linkers,'../saved_files/reduced_linkers')
 
-# +
 import pandas as pd
 amino_acid_df = pd.read_csv("../saved_files/amino_acid.csv")
 amino_acid_df = amino_acid_df.set_index('Amino Acids')
@@ -56,6 +55,5 @@ index = 0
 for linker in reduced_linkers:
     featurized[index, :] = set_features(linker)
     index += 1
-# -
 
 save_linkerfile(featurized,'../saved_files/encoded_reduced_linkers')
