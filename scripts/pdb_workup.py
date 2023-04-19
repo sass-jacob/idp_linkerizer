@@ -2,7 +2,7 @@ import Bio.PDB
 import numpy as np
 
 parser = Bio.PDB.PDBParser(QUIET=True)  # Don't show me warnings
-structure = parser.get_structure('2beg', '2beg.pdb')  # id of pdb file and location
+structure = parser.get_structure('2beg', '../saved_files/2beg.pdb')  # id of pdb file and location
 
 atoms = [a.parent.parent.id + '-' + str(a.parent.id[1]) + '-' +  a.name for a in structure[0].get_atoms() if a.parent.id[0] == ' ']  # obtained from model '0'
 atom_avgs = {}
@@ -27,4 +27,4 @@ for atom in ns[0].get_atoms():
 
 io = Bio.PDB.PDBIO()
 io.set_structure(ns)
-io.save('avg_2beg.pdb')
+io.save('../saved_files/avg_2beg.pdb')
