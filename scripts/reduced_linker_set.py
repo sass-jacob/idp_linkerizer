@@ -6,13 +6,9 @@ def generate_unencoded_linkers():
 
     #array of amino acids to consider
     #removed W due to low likelihood of linker functionality
-    #removed E due to similarity to D
-    #removed H
     #removed C to prevent disulfide bonding in linker
-    #removed Q due to similarity to N
-    #removed L
-    #removed P
-    amino_acids = np.array(['A', 'R', 'N', 'D', 'G', 'I', 'K', 'M', 'F', 'S', 'T', 'Y', 'V'])
+    #removed P due to low likelihood of linker functionality
+    amino_acids = np.array(['A', 'R', 'N', 'D', 'G', 'I', 'K', 'M', 'F', 'S', 'T', 'Y', 'V', 'Q', 'E', 'L', 'H'])
 
     #linker length we want to generate (can be more than a single value - began at 6)
     min_link_len = 6
@@ -32,48 +28,34 @@ def save_linkerfile(linkers,filename):
     #save linker dataset as filename 
     np.savez_compressed(filename+'.npz', linkers)
 
-#generate encodings for the linker set to represent the amino acids
-#each amino acid represented by its charge, HLB (hydrophobicity), and MW (molecular weight)
+reduced_linkers = generate_unencoded_linkers()
 
-#encode each amino acid
-def encode_aa(aa):
-    #map charge
-    amino_acid_charges = {
-        'A': 0, 'R': 1, 'N': 0, 'D': -1, 'C': 0,
-        'E': -1, 'Q': 0, 'G': 0, 'H': 0, 'I': 0,
-        'L': 0, 'K': 1, 'M': 0, 'F': 0, 'P': 0,
-        'S': 0, 'T': 0, 'W': 0, 'Y': 0, 'V': 0
-    }
-    #map HLB
-    hlb_scale = {
-        'A': 8.1, 'C': 5.5, 'D': 13.0, 'E': 12.0, 'F': 5.2,
-        'G': 9.0, 'H': 10.4, 'I': 4.9, 'K': 11.3, 'L': 4.9,
-        'M': 5.7, 'N': 11.6, 'P': 8.0, 'Q': 10.5, 'R': 10.5,
-        'S': 11.2, 'T': 9.1, 'V': 5.6, 'W': 4.4, 'Y': 6.2
-    }
-    
-    #map MW
-    amino_acid_weights = {
-        'A': 89.09, 'R': 174.20, 'N': 132.12, 'D': 133.10, 'C': 121.16,
-        'E': 147.13, 'Q': 146.15, 'G': 75.07, 'H': 155.16, 'I': 131.18,
-        'L': 131.18, 'K': 146.19, 'M': 149.21, 'F': 165.19, 'P': 115.13,
-        'S': 105.09, 'T': 119.12, 'W': 204.23, 'Y': 181.19, 'V': 117.15
-    }
-    
-    return amino_acid_charges[aa], round(hlb_scale[aa], 3), round(amino_acid_weights[aa], 3)
+print(np.shape(reduced_linkers))
+#save_linkerfile(reduced_linkers,'../saved_files/reduced_linkers')
 
-encoded_linkers_1 = []
+import pandas as pd
+amino_acid_df = pd.read_csv("../saved_files/amino_acid.csv")
+amino_acid_df = amino_acid_df.set_index('Amino Acids')
+featurized = np.zeros((len(reduced_linkers), 6 * len(np.array(amino_acid_df)[0])))
+print(np.shape(featurized))
+amino_acids = ['A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W','Y']
+
+def set_features(input_peptide):
+    out_row = []
+    peptide = [*input_peptide]
+    for letter in peptide:
+        which_amino_index = np.where(np.array(amino_acids) == letter)[0]
+        # pick the row corresponding to the amino acid to be appended to the output
+        feature = np.array(amino_acid_df)[which_amino_index]
+        out_row = np.append(out_row,feature)
+    return out_row
+
+# featurize all of the data
 index = 0
-linkers = generate_unencoded_linkers()
-for linker in linkers:
-    sequence = []
-    for aa in range(6):
-        sequence.append(encode_aa(linker[aa]))
-    
-    encoded_linkers_1.append(np.array(sequence).ravel())
-    if (index % 10000 == 0):
-        print(index)
+for linker in reduced_linkers[0:1000]:
+    featurized[index, :] = set_features(linker)
     index += 1
-    
-print(np.shape(encoded_linkers_1))
-save_linkerfile(encoded_linkers_1,'reduced_encoded_linkers')
+#    if index % 10000 == 0:
+    print(index)
+
+save_linkerfile(featurized,'../saved_files/encoded_reduced_linkers')
