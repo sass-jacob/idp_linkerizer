@@ -1,3 +1,4 @@
+import argparse
 #generates the FASTA files (strings of amino acids that describe the entire protein sequence input to generate structure)
 
 def generate_sequence_from_linker(linker):
@@ -31,3 +32,12 @@ def generate_fasta_file(linker):
     with open(filename, "w") as fasta_file:
         fasta_file.write('fastas/' + fasta_content)
 
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--linker', help='Linker sequence for generating the fasta file')
+    args = parser.parse_args
+
+    if args.linker:
+        generate_fasta_file(args.linker)
+    else:
+        print("Need to input a linker with --linker flag")
