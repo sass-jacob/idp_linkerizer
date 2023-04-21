@@ -30,7 +30,7 @@ def generate_fasta_file(linker):
 
     #write the fasta file
     with open(filename, "w") as fasta_file:
-        fasta_file.write('fastas/' + fasta_content)
+        fasta_file.write('../fastas/' + fasta_content)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
