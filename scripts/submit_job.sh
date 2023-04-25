@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Slurm sbatch options
-#SBATCH -o submission.sh.log-%j
+#SBATCH -o reduced_linker_sub.log-%j
 
 # Loading the required module
 module load anaconda/2022b
