@@ -53,7 +53,7 @@ def set_features(input_peptide):
 
 # featurize all of the data
 index = 0
-for linker in reduced_linkers[0:100]:
+for linker in reduced_linkers:
     featurized[index, :] = set_features(linker)
     index += 1
     if index % 10000 == 0:
