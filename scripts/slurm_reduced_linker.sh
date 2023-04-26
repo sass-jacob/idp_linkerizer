@@ -10,5 +10,6 @@
 # Loading the required module
 module load anaconda/2022b
 
+echo "Running python script" 
 # Run the script
 python reduced_linker_set.py
