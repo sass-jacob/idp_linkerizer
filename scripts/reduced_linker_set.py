@@ -1,6 +1,8 @@
 import numpy as np
 import itertools
 
+print('beginning')
+
 def generate_unencoded_linkers():
     #generate data set to perform clustering upon
 
