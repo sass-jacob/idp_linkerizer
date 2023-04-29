@@ -4,16 +4,9 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 import sklearn
 
-def load_in_dataframes():
-    #files will need to be referenced from local filesystem because .pkl files exceed the github limit
-    #adjust file directory when necessary
-    with open('saved_files/dfs.pkl', 'rb') as f:
-        dfs = pd.read_pickle(f)
-    with open('saved_files/dfs_mm.pkl', 'rb') as f:
-        dfs_mm = pd.read_pickle(f)
-    with open('saved_files/dfs_std.pkl', 'rb') as f:
-        dfs_std = pd.read_pickle(f)
-    return dfs, dfs_mm, dfs_std
+def load_in_encoded_linkers():
+    encoded_linkers = np.load('../saved_files/encoded_reduced_linkers.npz')['arr_0']
+    return encoded_linkers
 
 def generate_elbow_plot_full_dim(dfs_mm):
     #define the range of k values to test
