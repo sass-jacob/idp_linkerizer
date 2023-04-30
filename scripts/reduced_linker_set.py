@@ -61,4 +61,4 @@ for linker in reduced_linkers:
     if index % 10000 == 0:
         print(index)
 
-save_linkerfile(featurized,'../saved_files/encoded_reduced_linkers')
+#save_linkerfile(featurized,'../saved_files/encoded_reduced_linkers')
