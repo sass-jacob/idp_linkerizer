@@ -31,13 +31,15 @@ def pick_cluster_representatives(encoded_linkers,k):
     kmeans.fit(encoded_linkers)
     print('fit kmeans')
     distances = kmeans.transform(encoded_linkers)
-    closest_indices = np.array(np.argmin(distances, axis=0))
+    print(np.shape(distances))
+    closest_indices = np.array(np.argmin(distances, axis=1))
     representatives = np.zeros((k, 48))
     #find the representatives
-    i = 0
-    for index in closest_indices:
-        representatives[i,:] = encoded_linkers[index]
-        i += 1
+    for i in range(k):
+        cluster_indices = np.where(closest_indices == i)[0]
+        cluster_distances = distances[cluster_indices, i]
+        min_index = cluster_indices[np.argmin(cluster_distances)]
+        representatives[i,:] = encoded_linkers[min_index]
     return representatives, closest_indices
 
 def save_nparray(nparray,filename):
@@ -45,23 +47,14 @@ def save_nparray(nparray,filename):
     np.savez_compressed(filename+'.npz', nparray)
     return
 
-def unstandardize_and_decode(representatives, std_array):
-    mmscaler = sklearn.preprocessing.MinMaxScaler()
-    unstd_reps = mmscaler.inverse_transform(representatives)
-    #map HLB
-    hlb_scale = {
-        'A': 8.1, 'C': 5.5, 'D': 13.0, 'E': 12.0, 'F': 5.2,
-        'G': 9.0, 'H': 10.4, 'I': 4.9, 'K': 11.3, 'L': 4.9,
-        'M': 5.7, 'N': 11.6, 'P': 8.0, 'Q': 10.5, 'R': 10.5,
-        'S': 11.2, 'T': 9.1, 'V': 5.6, 'W': 4.4, 'Y': 6.2
-    }
-    hlb_scale_inv = {v: k for k, v in hlb_scale.items()}
+import pandas as pd
+def decode(representatives, aa_df):
     rep_linkers = []
-    for unstd_rep in unstd_reps:
+    for unstd_rep in representatives:
         sequence = ''
         for encoding_index in range(len(unstd_rep)):
-            if (encoding_index - 1) % 3 == 0:
-                sequence += hlb_scale_inv[unstd_rep[encoding_index]]
+            if (encoding_index - 1) % 8 == 0:
+                sequence += aa_df.loc[aa_df['VHSE1'] == unstd_rep[encoding_index-1]].index
         rep_linkers.append(sequence)
     return rep_linkers
 
@@ -69,12 +62,16 @@ if __name__ == '__main__':
     encoded_linkers = load_in_encoded_linkers()
     print(np.shape(encoded_linkers))
     centroids, closest_indices = pick_cluster_representatives(encoded_linkers, 100)
+    #centroids = np.load('../saved_files/encoded_reps.npz')['arr_0']
+    #closest_indices = np.load('../saved_files/medoid_indices.npz')['arr_0']
     print(np.shape(centroids))
     print(np.shape(closest_indices))
     save_nparray(centroids, '../saved_files/encoded_reps')
     save_nparray(closest_indices, '../saved_files/medoid_indices')
-
+    amino_acid_df = pd.read_csv("../saved_files/amino_acid.csv")
+    amino_acid_df = amino_acid_df.set_index('Amino Acids')
+    print(np.shape(amino_acid_df))
+    representatives = decode(centroids, amino_acid_df)
+    print(representatives)
     #representative_linkers = unstandardize_and_decode(centroids, dfs['all'])
     #save_nparray(representative_linkers, 'saved_files/decoded_reps')
-    #representative_linkers = np.load('saved_files/decoded_reps.npz') 
-    #print(representative_linkers['arr_0'])
