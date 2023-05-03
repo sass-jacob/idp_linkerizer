@@ -1,30 +1,53 @@
-import argparse
-from Bio.PDB import PDBParser, PDBIO
+from Bio import pairwise2, PDB
+from Bio.PDB import Superimposer
 
-parser = argparse.ArgumentParser(description='Remove all non-CA atoms from a PDB file')
-parser.add_argument('-input', required=True, help='Input PDB file and path')
-parser.add_argument('-output', required=True, help='Output PDB file and path')
-args = parser.parse_args()
+def get_coordinates(pdb_file, chain_ids):
+    """
+    Extracts alpha carbon coordinates for residues 17-42 for each chain in pdb_file.
+    
+    Args:
+    pdb_file (str): path to PDB file
+    chain_ids (list): list of chain IDs to extract coordinates for
+    
+    Returns:
+    dict: dictionary containing chain IDs as keys and alpha carbon coordinates as values
+    """
+    coords = {}
+    parser = PDBParser()
+    for chain_id in chain_ids:
+        coords[chain_id] = []
+    with open(pdb_file, 'r') as f:
+        structure = parser.get_structure('pdb', f)
+        for model in structure:
+            for chain in model:
+                if chain.id in chain_ids:
+                    for residue in chain:
+                        if residue.get_id()[1] >= 17 and residue.get_id()[1] <= 42:
+                            try:
+                                coords[chain.id].append(residue['CA'].get_coord())
+                            except KeyError:
+                                pass
+    return coords
 
-parser = PDBParser()
+# Load reference and other pdb structures
+ref_pdb = PDB.PDBParser().get_structure("ref", "../saved_files/avg_2beg.pdb")
+other_pdb = PDB.PDBParser().get_structure("other", "other.pdb")
 
-structure = parser.get_structure('protein', args.input)
+# Get alpha carbon atoms from both structures
+ref_atoms = [a for a in ref_pdb.get_atoms() if a.get_id() == 'CA']
+other_atoms = [a for a in other_pdb.get_atoms() if a.get_id() == 'CA']
 
-new_structure = []
+# Get the residues common to both structures
+ref_residues = {res.id for res in ref_pdb.get_residues()}
+common_residues = [res for res in other_pdb.get_residues() if res.id in ref_residues]
 
-for model in structure:
-    new_model = model.copy()
-    for chain in model:
-        new_chain = chain.copy()
-        for residue in chain:
-            new_residue = residue.copy()
-            for atom in residue:
-                if atom.get_name() == 'CA':
-                    new_residue.add(atom.copy())
-            new_chain.add(new_residue)
-        new_model.add(new_chain)
-    new_structure.append(new_model)
+# Get alpha carbons for only the common residues
+ref_atoms = [a for a in ref_atoms if a.get_parent().id in ref_residues]
+other_atoms = [a for a in other_atoms if a.get_parent() in common_residues]
 
-io = PDBIO()
-io.set_structure(new_structure)
-io.save(args.output)
+# Perform superimposition and calculate RMSD
+sup = Superimposer()
+sup.set_atoms(ref_atoms, other_atoms)
+rmsd = sup.rms
+
+print("RMSD:", rmsd)
