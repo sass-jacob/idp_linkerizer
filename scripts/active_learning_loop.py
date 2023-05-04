@@ -72,7 +72,7 @@ def active_learning_loop_epsilon_greedy(search_space, search_space_enc, X_enc, y
     gp = fit_model(X_enc.to(device), y.to(device))
     acq_func = EpsilonGreedyAcquisitionFunction(gp, epsilon)
     next_X_list = {}
-    num_sample = 2  # TODO: change to 100 for linkers
+    num_sample = 100  # TODO: change to 100 for linkers
 
     while (len(next_X_list) < num_sample):
         next_X = optimize_acqf_discrete(
@@ -96,7 +96,7 @@ def active_learning_loop_greedy(search_space, search_space_enc, X_enc, y, isSamp
     gp = fit_model(X_enc.to(device), y.to(device))
     acq_func = GreedyAcquisitionFunction(gp)
     next_X_list = {}
-    num_sample = 2  # TODO: change to 100 for linkers
+    num_sample = 100  # TODO: change to 100 for linkers
 
     while (len(next_X_list) < num_sample):
         next_X = optimize_acqf_discrete(
@@ -134,7 +134,7 @@ def active_learning_loop_UCB(search_space, search_space_enc, X_enc, y, isSampled
     y_standarized = (y-y.mean())/y.std()
     gp = fit_model(X_enc.to(device), y_standarized.to(device))
     gp.eval()
-    acq_func = UpperConfidenceBound(gp, beta=100)
+    acq_func = UpperConfidenceBound(gp, beta=0.1)
     next_X_list = {}
     num_sample = 100 # TODO: change to 100 for linkers
 
@@ -162,6 +162,7 @@ if __name__ == "__main__":
     y_train = torch.empty((0, 1))
 
     # Read all rmsd values in /UCB directory
+    # TODO: Change to the directory that you are running (ex) UCB->greedy) 
     for root, dirs, files in os.walk(project_dir+'/rmsd/UCB'):
         for file_name in files:
             file_path = os.path.join(root, file_name)  # Get the full file path
@@ -169,11 +170,13 @@ if __name__ == "__main__":
                 for line in file:
                     X, y = line.split('\t')
                     X_train.append(X)
-                    y_train = torch.cat([y_train, torch.tensor([[float(y)]])], dim=0)
+                    # -float(y) since we want to minimize RMSD (max. -RMSD)
+                    y_train = torch.cat([y_train, -torch.tensor([[float(y)]])], dim=0)
 
     print(f"Train set size {len(y_train)}")
 
     start = time.time()
+    # TODO: save encoded_linker_dict.json to the directory below. No need to change file name
     with open(project_dir +'/saved_files/encoded_linker_dict.json', 'r') as file:
         search_space_dict = json.load(file)
     search_space = list(search_space_dict.keys())
@@ -186,7 +189,9 @@ if __name__ == "__main__":
     print(isSampled)
 
     X_train_enc = torch.tensor([search_space_dict[x] for x in X_train])
-    acqf = 'UCB' # Change to other acquisition functions
+    
+    # TODO: Change to the acqf that you are running (ex) UCB->greedy) 
+    acqf = 'UCB' 
     e = 1
 
     print(f"Reading in files {time.time()-start}")
