@@ -161,7 +161,9 @@ if __name__ == "__main__":
     y_train = torch.empty((0, 1))
 
     # Read all rmsd values in /UCB directory
-    # TODO: Change to the directory that you are running (ex) UCB->greedy) 
+    
+    # TODO: Change to the directory that you are running (ex) UCB->greedy)
+    # TODO: store the first_random_100_rmsds.txt in the directory (initial set of linkers)
     for root, dirs, files in os.walk(project_dir+'/rmsd/UCB'):
         for file_name in files:
             file_path = os.path.join(root, file_name)  # Get the full file path
@@ -171,7 +173,8 @@ if __name__ == "__main__":
                     X_train.append(X)
                     # -float(y) since we want to minimize RMSD (max. -RMSD)
                     y_train = torch.cat([y_train, -torch.tensor([[float(y)]])], dim=0)
-
+                    
+    print(
     print(f"Train set size {len(y_train)}")
 
     start = time.time()
