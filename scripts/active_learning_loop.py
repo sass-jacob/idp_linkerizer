@@ -167,6 +167,7 @@ if __name__ == "__main__":
     for root, dirs, files in os.walk(project_dir+'/rmsd/UCB'):
         for file_name in files:
             file_path = os.path.join(root, file_name)  # Get the full file path
+            print("Input files", file_path)
             with open(file_path, 'r') as file:
                 for line in file:
                     X, y = line.split('\t')
@@ -174,7 +175,6 @@ if __name__ == "__main__":
                     # -float(y) since we want to minimize RMSD (max. -RMSD)
                     y_train = torch.cat([y_train, -torch.tensor([[float(y)]])], dim=0)
                     
-    print(
     print(f"Train set size {len(y_train)}")
 
     start = time.time()
