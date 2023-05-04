@@ -10,4 +10,4 @@ print(np.shape(linkers))
 random_linkers = linkers[random.sample(range(len(linkers)), 100)]
 print(random_linkers)
 
-save_linkerfile(random_linkers, '../saved_files/second_100_random')
+#save_linkerfile(random_linkers, '../saved_files/second_100_random')
