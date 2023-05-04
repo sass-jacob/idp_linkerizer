@@ -131,8 +131,7 @@ def active_learning_loop_UCB(search_space, search_space_enc, X_enc, y, isSampled
     start_al = time.time()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("Using device: ", device)
-    y_standarized = (y-y.mean())/y.std()
-    gp = fit_model(X_enc.to(device), y_standarized.to(device))
+    gp = fit_model(X_enc.to(device), y.to(device))
     gp.eval()
     acq_func = UpperConfidenceBound(gp, beta=0.1)
     next_X_list = {}
