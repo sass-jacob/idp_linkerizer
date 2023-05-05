@@ -138,7 +138,9 @@ def active_learning_loop_UCB(search_space, search_space_enc, X_enc, y, isSampled
     gp = fit_model(X_enc.to(device), y_standarized.to(device))
     
     gp.eval()
-    acq_func = UpperConfidenceBound(gp, beta=1)
+    beta = 10
+    print("Beta: ", beta)
+    acq_func = UpperConfidenceBound(gp, beta=beta)
     next_X_list = {}
     num_sample = 100 # TODO: change to 100 for linkers
 
@@ -219,7 +221,7 @@ if __name__ == "__main__":
         print(isSampled)
 
 
-    filename = project_dir +'/active_learning_results/'+acqf+f'/loop_{len(files)}.jsonl'
+    filename = project_dir +'/active_learning_results/'+acqf+f'/loop_{int(len(y_train)/100)}.jsonl'
     
     # saved as two json objects separated by '\n'
     with open(filename, 'w') as outfile:
