@@ -69,7 +69,8 @@ class EpsilonGreedyAcquisitionFunction(AcquisitionFunction):
 def active_learning_loop_epsilon_greedy(search_space, search_space_enc, X_enc, y, isSampled, epsilon):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("Using device: ", device)
-    gp = fit_model(X_enc.to(device), y.to(device))
+    y_standarized = (y-y.mean())/y.std()
+    gp = fit_model(X_enc.to(device), y_standarized.to(device))
     acq_func = EpsilonGreedyAcquisitionFunction(gp, epsilon)
     next_X_list = {}
     num_sample = 100  # TODO: change to 100 for linkers
@@ -93,7 +94,8 @@ def active_learning_loop_epsilon_greedy(search_space, search_space_enc, X_enc, y
 def active_learning_loop_greedy(search_space, search_space_enc, X_enc, y, isSampled):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("Using device: ", device)
-    gp = fit_model(X_enc.to(device), y.to(device))
+    y_standarized = (y-y.mean())/y.std()
+    gp = fit_model(X_enc.to(device), y_standarized.to(device))
     acq_func = GreedyAcquisitionFunction(gp)
     next_X_list = {}
     num_sample = 100  # TODO: change to 100 for linkers
@@ -131,9 +133,12 @@ def active_learning_loop_UCB(search_space, search_space_enc, X_enc, y, isSampled
     start_al = time.time()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("Using device: ", device)
-    gp = fit_model(X_enc.to(device), y.to(device))
+    
+    y_standarized = (y-y.mean())/y.std()
+    gp = fit_model(X_enc.to(device), y_standarized.to(device))
+    
     gp.eval()
-    acq_func = UpperConfidenceBound(gp, beta=0.1)
+    acq_func = UpperConfidenceBound(gp, beta=1)
     next_X_list = {}
     num_sample = 100 # TODO: change to 100 for linkers
 
