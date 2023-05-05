@@ -2,9 +2,10 @@
 
 # Slurm sbatch options
 #SBATCH -o reduced_linker_sub.log-%j
-
-# Loading the required module
-module load anaconda/2022b
+#SBATCH --time=0-08:00:00
+#SBATCH --gres=gpu:volta:1
+#SBATCH -c 20
+export CUDA_HOME=/usr/local/pkg/cuda/cuda-11.3
 
 # Run the script
-python reduced_linker_set.py
+/home/gridsan/jsass/.conda/envs/project_env/bin/python active_learning_loop.py

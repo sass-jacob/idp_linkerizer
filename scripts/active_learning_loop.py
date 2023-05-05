@@ -200,8 +200,8 @@ if __name__ == "__main__":
     X_train_enc = torch.tensor([search_space_dict[x] for x in X_train])
     
     # TODO: Change to the acqf that you are running (ex) UCB->greedy) 
-    acqf = 'UCB' 
-    e = 1
+    acqf = 'epsilongreedy' 
+    e = 0.5
 
     print(f"Reading in files {time.time()-start}")
 
