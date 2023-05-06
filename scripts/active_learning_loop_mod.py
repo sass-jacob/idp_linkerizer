@@ -211,7 +211,7 @@ if __name__ == "__main__":
     
     # TODO: Change to the acqf that you are running (ex) UCB->greedy) 
     acqf = 'UCB' 
-    e = 1
+    e = 0.5
 
     print(f"Reading in files {time.time()-start}")
 
