@@ -53,20 +53,6 @@ class GreedyAcquisitionFunction(AcquisitionFunction):
         mean = posterior.mean
         return mean
 
-"""
-class EpsilonGreedyAcquisitionFunction(AcquisitionFunction):
-    def __init__(self, model, epsilon):
-        super().__init__(model=model)
-        self.epsilon = epsilon
-    def forward(self, X: torch.Tensor) -> torch.Tensor:
-        q_values = self.model.posterior(X).mean#.squeeze()
-        if random.random() < self.epsilon:
-            rand = torch.tensor([random.uniform(0, 1)], device=X.device)
-            print(rand)
-            return rand
-        else:
-            return q_values.argmax().unsqueeze(0)
-"""
 
 
 def active_learning_loop_epsilon_greedy(search_space, search_space_enc, X_enc, y, isSampled, epsilon):
