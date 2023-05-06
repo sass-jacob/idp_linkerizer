@@ -53,6 +53,7 @@ class GreedyAcquisitionFunction(AcquisitionFunction):
         mean = posterior.mean
         return mean
 
+"""
 class EpsilonGreedyAcquisitionFunction(AcquisitionFunction):
     def __init__(self, model, epsilon):
         super().__init__(model=model)
@@ -65,27 +66,36 @@ class EpsilonGreedyAcquisitionFunction(AcquisitionFunction):
             return rand
         else:
             return q_values.argmax().unsqueeze(0)
+"""
+
 
 def active_learning_loop_epsilon_greedy(search_space, search_space_enc, X_enc, y, isSampled, epsilon):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print("Using device: ", device)
     y_standarized = (y-y.mean())/y.std()
     gp = fit_model(X_enc.to(device), y_standarized.to(device))
-    acq_func = EpsilonGreedyAcquisitionFunction(gp, epsilon)
+    acq_func = GreedyAcquisitionFunction(gp)
     next_X_list = {}
     num_sample = 100  # TODO: change to 100 for linkers
 
     while (len(next_X_list) < num_sample):
-        next_X = optimize_acqf_discrete(
-            acq_function=acq_func,
-            q=1,
-            choices=search_space_enc[~isSampled]
-        )
+        
+        if random.random() < epsilon:
+            next_X = [random.choice(search_space_enc[~isSampled])]
+            acqf_val = None
+            
+        else:
+            next_X = optimize_acqf_discrete(
+                acq_function=acq_func,
+                q=1,
+                choices=search_space_enc[~isSampled]
+            )
+            acqf_val = float(next_X[1])
 
         next_X_expanded = next_X[0].expand(search_space_enc.shape[0], -1)
 
         pos = torch.all(torch.eq(search_space_enc, next_X_expanded), dim=1).nonzero()[0]
-        next_X_list[search_space[pos]] = float(next_X[1])
+        next_X_list[search_space[pos]] = acqf_val
         isSampled[pos] = True
 
     return next_X_list, isSampled
@@ -138,7 +148,7 @@ def active_learning_loop_UCB(search_space, search_space_enc, X_enc, y, isSampled
     gp = fit_model(X_enc.to(device), y_standarized.to(device))
     
     gp.eval()
-    beta = 10
+    beta = 1
     print("Beta: ", beta)
     acq_func = UpperConfidenceBound(gp, beta=beta)
     next_X_list = {}
@@ -200,7 +210,7 @@ if __name__ == "__main__":
     X_train_enc = torch.tensor([search_space_dict[x] for x in X_train])
     
     # TODO: Change to the acqf that you are running (ex) UCB->greedy) 
-    acqf = 'epsilongreedy' 
+    acqf = 'UCB' 
     e = 0.5
 
     print(f"Reading in files {time.time()-start}")
