@@ -1,6 +1,0 @@
-Train set size 0
-Traceback (most recent call last):
-  File "/home/gridsan/jsass/linkers/idp_linkerizer/scripts/active_learning_loop.py", line 189, in <module>
-    with open(project_dir +'/saved_files/encoded_linker_dict.json', 'r') as file:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '../saved_files/encoded_linker_dict.json'

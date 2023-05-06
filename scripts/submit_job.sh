@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Slurm sbatch options
-#SBATCH -o reduced_linker_sub.log-%j
+#SBATCH -o active_learning.log-%j
 #SBATCH --time=0-08:00:00
 #SBATCH --gres=gpu:volta:1
 #SBATCH -c 20
