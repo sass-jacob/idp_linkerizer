@@ -8,4 +8,4 @@
 export CUDA_HOME=/usr/local/pkg/cuda/cuda-11.3
 
 # Run the script
-/home/gridsan/jsass/.conda/envs/project_env/bin/python active_learning_loop.py
+/home/gridsan/jsass/.conda/envs/project_env/bin/python active_learning_loop_mod.py
