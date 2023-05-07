@@ -49,6 +49,7 @@ def fit_model(X, y):
 
 class GreedyAcquisitionFunction(AcquisitionFunction):
     def forward(self, X: torch.Tensor) -> torch.Tensor:
+        X = X.to('cuda')
         posterior = self.model.posterior(X)
         mean = posterior.mean
         return mean
@@ -167,7 +168,7 @@ if __name__ == "__main__":
     
     # TODO: Change to the directory that you are running (ex) UCB->greedy)
     # TODO: store the first_random_100_rmsds.txt in the directory (initial set of linkers)
-    for root, dirs, files in os.walk(project_dir+'/rmsd/UCB'):
+    for root, dirs, files in os.walk(project_dir+'/rmsd/greedy'):
         for file_name in files:
             file_path = os.path.join(root, file_name)  # Get the full file path
             print("Input files", file_path)
@@ -196,7 +197,7 @@ if __name__ == "__main__":
     X_train_enc = torch.tensor([search_space_dict[x] for x in X_train])
     
     # TODO: Change to the acqf that you are running (ex) UCB->greedy) 
-    acqf = 'UCB' 
+    acqf = 'greedy' 
     e = 0.5
 
     print(f"Reading in files {time.time()-start}")
