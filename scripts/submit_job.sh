@@ -2,7 +2,7 @@
 
 # Slurm sbatch options
 #SBATCH -o active_learning.log-%j
-#SBATCH --time=0-02:00:00
+#SBATCH --time=0-04:00:00
 #SBATCH --gres=gpu:volta:2
 #SBATCH -c 40
 export CUDA_HOME=/usr/local/pkg/cuda/cuda-11.3
