@@ -105,4 +105,4 @@ if __name__ == '__main__':
     print(representatives)
     print(np.shape(representatives))
     #representative_linkers = unstandardize_and_decode(centroids, dfs['all'])
-    save_nparray(representatives, '../saved_files/decoded_representatives')
+    #save_nparray(representatives, '../saved_files/decoded_representatives')
