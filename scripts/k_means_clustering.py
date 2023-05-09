@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
-from sklearn.cluster import MiniBatchKMeans
 from sklearn_extra.cluster import KMedoids
 import sklearn
 
@@ -32,24 +31,10 @@ def generate_elbow_plot_full_dim(encoded_linkers):
 
 #clustering using kmeans clustering
 def pick_cluster_representatives(encoded_linkers,k):
+    #fit kmeans
     kmeans = KMeans(n_clusters=k, n_init="auto", max_iter=5000, random_state=42)
     kmeans.fit(encoded_linkers)
     print('fit kmeans')
-    distances = kmeans.transform(encoded_linkers)
-    print('distances shape: {}'.format(np.shape(distances)))
-    closest_indices = np.array(np.argmin(distances, axis=0))
-    print('indices shape: {}'.format(np.shape(closest_indices))) 
-    representatives = np.zeros((k, 48))
-    #find the representatives
-    for i in range(k):
-        representatives[i,:] = encoded_linkers[closest_indices[i]]
-    return representatives, closest_indices
-
-#clustering using batched kmeans clustering
-def pick_cluster_minibatched(encoded_linkers,k):
-    kmeans = MiniBatchKMeans(n_clusters=k, n_init="auto", max_iter=5000, random_state=42, batch_size=100000)
-    kmeans.fit(encoded_linkers)
-    print('fit kmeans mini batch')
     distances = kmeans.transform(encoded_linkers)
     print('distances shape: {}'.format(np.shape(distances)))
     closest_indices = np.array(np.argmin(distances, axis=0))
@@ -69,18 +54,19 @@ def save_nparray(nparray,filename):
 #decode the encoded representatives
 def decode(representatives, aa_df):
     rep_linkers = []
+    #go through each representative
     for representative in representatives:
         sequence = ''
         for encoding_index in range(len(representative)):
+            #every 8th index is a VHSE1 encoding
             if (encoding_index - 1) % 8 == 0:
                 sequence += (aa_df.loc[aa_df['VHSE1'] == representative[encoding_index-1]]).index
         rep_linkers.append(sequence[0])
     return rep_linkers
 
-
-from sklearn_extra.cluster import KMedoids
 #too memory intensive because computing pairwise distances
 def pick_cluster_medoids(encoded_linkers,k):
+    #fit kmedoids
     kmedoids = KMedoids(n_clusters=k, metric='euclidean')
     kmedoids.fit(encoded_linkers)
     medoid_indices = kmedoids.medoid_indices_
@@ -90,10 +76,10 @@ def pick_cluster_medoids(encoded_linkers,k):
 
 if __name__ == '__main__':
     encoded_linkers = load_in_encoded_linkers()
-    #medoids, medoid_indices = pick_cluster_medoids(encoded_linkers, 100)
-    centroids, closest_indices = pick_cluster_representatives(encoded_linkers, 100)
-    #centroids = np.load('../saved_files/encoded_near_centroid.npz')['arr_0']
-    #closest_indices = np.load('../saved_files/near_centroid_indices.npz')['arr_0']
+    #medoids, medoid_indices = pick_cluster_medoids(encoded_linkers, 100) -> too memory intensive
+    #centroids, closest_indices = pick_cluster_representatives(encoded_linkers, 100)
+    centroids = np.load('../saved_files/encoded_near_centroid.npz')['arr_0']
+    closest_indices = np.load('../saved_files/near_centroid_indices.npz')['arr_0']
     print(centroids)
     print(closest_indices)
     #save_nparray(centroids, '../saved_files/encoded_near_centroid')
@@ -102,7 +88,5 @@ if __name__ == '__main__':
     amino_acid_df = amino_acid_df.set_index('Amino Acids')
     print(np.shape(amino_acid_df))
     representatives = decode(centroids, amino_acid_df)
-    print(representatives)
     print(np.shape(representatives))
-    #representative_linkers = unstandardize_and_decode(centroids, dfs['all'])
     #save_nparray(representatives, '../saved_files/decoded_representatives')
