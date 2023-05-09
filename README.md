@@ -1,27 +1,15 @@
 # idp_linkerizer
- Predicts an intrinsically disordered protein linker identity for best distance map compared to experimental data of amyloid beta 42 peptides
+ Predicts an intrinsically disordered protein linker identity for smallest RMSD of amyloid beta 42 polymerized together with hexapeptide linkers versus the experimentally-determined 2beg.pdb 
 
- Begin with embedding each amino acid within a linker as a vector of their:  
- **(1)** Charge.  
- **(2)** Hydrophilic-Lypophilic Balance (HLB) index as a measure of hydrophobicity.  
- **(3)** Molecular Weight of Amino Acid Residue (Da).     
+ **(1)** Run reduced_linker_set.py using slurm_reduced_linker.sh to obtain the encodings for all possible hexapeptide linkers **excluding W, C, and P**. 
+ **(2)** Run k_means_clustering.py to obtain a set of 100 encoded linkers that are clustered by taking the closest encoding to the centroids (KMedoids too memory intensive). 
+ **(3)** Can run random_sampling.py to obtain a random set of unencoded linkers. 
 
- For example, the embedding of linker 'TMS', the resultant vector would be [0, 9.1, 119.12, 0, 5.7, 149.21, 0, 11.2, 105.09].  
- [Charge, HLB, MW, ..., Charge, HLB, MW].  
- (note that this linker is defined as only length 3)  
- 
-The total space for linker identities of length 6 containing all 20 amino acids spans 20^6 possible linkers.  
-We removed a subset of amino acids based on similarity and avoidance of likely interactive moieties (such as Cysteine) to reduce this large space for clustering.  
-This results in a subset of 13 amino acids shown below, which include positively charged, negatively charge, polar, and nonpolar amino acids.  
-amino acid set {A, R, N, D, G, I, K, M, F, S, T, Y, V}
+**NOTE** generate_fasta_files.py can be used generally to generate fasta files relevant, but was not used in this implementation using ColabFold 
 
- MinMax and Standard scaling were performed on the embedded reduced amino acid linker set to compare effect on explained variance in Principal Component Analysis. Below shows the percentage of explained variance by each principal component graphed versus # of principal components for the linker set of all length 6 amino acid linkers.
+**(4)** Run average_2beg_workup.py to average the reference model across the 10 models provided experimentally. 
+**(5)** Run AlphaFold2_Github_Submission.ipynb in a Google Colaboratory to run the prediction of structures. 
+**(6)** Run compute_rmsd.ipynb in a Google Colaboratory to calculate the RMSDs between the predicted structures and the avg_2beg.pdb
+**(7)** Feed rmsd values and pick acquisition function to run active_learning_loop.py and obtain new predictions to loop **5, 6, and 7**
 
- ![Explained Variance for Principal Component Analysis](https://github.com/sass-jacob/idp_linkerizer/blob/main/figures/reduced_explained_variance_plot.png)
-
-The projection of the first two principal components the reduced linker set for visualization of data:
-
-![Principal components projections](https://github.com/sass-jacob/idp_linkerizer/blob/main/figures/reduced_PCA_projection.png)
-
-
-
+Data analysis is performed using relevant files provided.
