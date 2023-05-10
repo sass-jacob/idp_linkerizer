@@ -14,4 +14,6 @@
 
 Data analysis is performed using relevant files provided.
 
+
+**RESULTS**
 The linkers selected at each active learning loops and their acquisition function values are in the active_learning_results_dict directory. The linkers and their calculated rmsd values are in the rmsd directory. 
