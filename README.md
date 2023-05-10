@@ -13,3 +13,5 @@
 **(7)** Feed rmsd values and pick acquisition function to run active_learning_loop.py and obtain new predictions to loop **5, 6, and 7**.  
 
 Data analysis is performed using relevant files provided.
+
+The linkers selected at each active learning loops and their acquisition function values are in the active_learning_results_dict directory. The linkers and their calculated rmsd values are in the rmsd directory. 
